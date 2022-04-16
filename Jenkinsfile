@@ -1,10 +1,10 @@
 pipeline {
     agent any
     environment {
+        CLUSTER_NAME = 'nodjs-test-cluster'
         AWS_ACCOUNT_ID="YOUR_ACCOUNT_ID"
         AWS_DEFAULT_REGION="ap-south-1" 
         IMAGE_REPO_NAME="nodejs-test"
-        IMAGE_TAG="latest"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
    
@@ -29,7 +29,7 @@ pipeline {
     stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build ("${IMAGE_REPO_NAME}:${IMAGE_TAG}", "./app")
+          dockerImage = docker.build ("${IMAGE_REPO_NAME}:${env.BUILD_ID}", "./app")
         }
       }
     }
@@ -38,14 +38,21 @@ pipeline {
     stage('Pushing to ECR') {
      steps{  
          script {
-                sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"
-                sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                sh "docker tag ${IMAGE_REPO_NAME}:${env.BUILD_ID} ${REPOSITORY_URI}:${env.BUILD_ID}"
+                sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${env.BUILD_ID}"
          }
         }
     }
 
     stage("kubernetes deployment"){
-        sh 'kubectl apply -f deployment.yml'
+        steps{
+          echo "Deployment started ..."
+			    sh 'ls -ltr'
+			    sh 'pwd'
+			    sh "sed -i 's/tagversion/${env.BUILD_ID}/g' deployment.yaml"  
+                echo "Start deployment of deployment.yaml"
+            step([$class: 'KubernetesEngineBuilder', clusterName: env.CLUSTER_NAME, location: env.AWS_DEFAULT_REGION, manifestPattern: 'deployment.yaml',  verifyDeployments: true])    
+        }
     }
 
     stage("kubernetes service"){
@@ -54,7 +61,7 @@ pipeline {
 
     stage("kubernetes autoscalar"){
         sh 'kubectl apply -f autoscalar.yml'
-    }
+    }         
 
 }
 

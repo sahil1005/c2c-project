@@ -15,7 +15,7 @@ spec:
         app: nodeapp
     spec:
       containers:
-      - image: <aws_account_id>.dkr.ecr.<aws_region>.amazonaws.com/nodejs-test
+      - image: <aws_account_id>.dkr.ecr.<aws_region>.amazonaws.com/nodejs-test:tagversion
         name: nodeserver
         ports:
         - containerPort: 3000
