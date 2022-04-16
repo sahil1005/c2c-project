@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nodeapp
+  name: nodeapp-deployment
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: nodeapp
+  template:
+    metadata:
+      labels:
+        app: nodeapp
+    spec:
+      containers:
+      - image: thetips4you/nodeapp:latest
+        limits:
+          cpu: 1000m
+          memory: 512Mi
+        name: nodeserver
+        ports:
+        - containerPort: 3000
+        resources:
+          cpu: 500m
+          memory: 256Mi
