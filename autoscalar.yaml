@@ -2,14 +2,14 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscalar
 metadata:
   name: nodeapp-autoscale
-  app: nodeapp
 spec:
+  maxReplicas: 20
+  minReplicas: 10
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: nodeapp-deployment
-  minReplicas: 10
-  maxReplicas: 20
-  targetCPUUtilizationPercentage: 50  
+  targetCPUUtilizationPercentage: 50
+
     
       

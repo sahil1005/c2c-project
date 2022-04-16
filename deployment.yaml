@@ -15,12 +15,14 @@ spec:
         app: nodeapp
     spec:
       containers:
-      - image: hellcaster/nodejs-test:latest
+      - image: <aws_account_id>.dkr.ecr.<aws_region>.amazonaws.com/nodejs-test
         name: nodeserver
         ports:
         - containerPort: 3000
         resources:
           limits:
             cpu: 1000m
+            memory: 512Mi
           requests:
             cpu: 500m
+            memory: 256Mi
