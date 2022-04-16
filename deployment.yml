@@ -15,7 +15,7 @@ spec:
         app: nodeapp
     spec:
       containers:
-      - image: thetips4you/nodeapp:latest
+      - image: hellcaster/nodejs-test:latest
         limits:
           cpu: 1000m
           memory: 512Mi
