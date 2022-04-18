@@ -56,11 +56,11 @@ pipeline {
     }
 
     stage("kubernetes service"){
-        sh 'kubectl apply -f service.yml'
+        sh 'kubectl apply -f service.yaml'
     }
 
     stage("kubernetes autoscalar"){
-        sh 'kubectl apply -f autoscalar.yml'
+        sh 'kubectl apply -f autoscalar.yaml'
     }         
 
 }
